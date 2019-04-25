@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/recipe_widget_title"
+        android:text="@string/recipe_widget_title"
+        android:textColor="#FFF"
+        android:background="@color/colorPrimary"
+        android:textSize="18dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+
+        android:textFontWeight="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+       <ListView
+           android:id="@+id/lvwRecipeNameList"
+           tools:listitem="@layout/favorite_recipes_widget_list_item"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+       </ListView>
+
+        <TextView
+            android:id="@+id/txtWidgetInfoNoFavorites"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/info_widget_no_favorites"/>
+    </FrameLayout>
+
+</LinearLayout>

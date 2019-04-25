@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">BakingMadeEasy</string>
+
+    <string name="ingredients">ingredients</string>
+    <string name="directions">directions</string>
+
+    <string name="measure_unit_cup">cup</string>
+    <string name="measure_unit_tsp">teaspoon</string>
+    <string name="measure_unit_tbsp">tablespoon</string>
+    <string name="measure_unit_g">gram</string>
+    <string name="measure_unit_k">kilogram</string>
+    <string name="measure_unit_unit">unit</string>
+    <string name="recipe_name">Recipe Name</string>
+    <string name="recipe_widget_title">Baking Made Easy</string>
+    <string name="default_recipe_widget_emtpy">no favorites here</string>
+    <string name="default_short_description">no short-description here</string>
+    <string name="default_description">no description here</string>
+    <string name="info_widget_no_favorites">no favorites here...</string>
+    <string name="error_no_internet_connection">no internet connection</string>
+    <string name="retry">Retry</string>
+</resources>
