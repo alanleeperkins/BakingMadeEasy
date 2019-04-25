@@ -2,24 +2,24 @@ package alpitsolutions.com.bakingmadeeasy.utility;
 
 public class Globals  {
 
-    private static Globals instance;
+    private static Globals mInstance;
 
     // variables for the auto-open recipe functionality
     // launched from an widget
-    public Boolean isActiveAutoLoadRecipe;
-    public Integer idAutoLoadRecipe;
+    public Boolean mIsActiveAutoLoadRecipe;
+    public Integer mIdAutoLoadRecipe;
 
     static {
-        instance = new Globals();
+        mInstance = new Globals();
     }
 
     private Globals() {
-        isActiveAutoLoadRecipe = false;
-        idAutoLoadRecipe = -1;
+        mIsActiveAutoLoadRecipe = false;
+        mIdAutoLoadRecipe = -1;
     }
 
     public static Globals getInstance() {
-        return Globals.instance;
+        return Globals.mInstance;
     }
 
 }

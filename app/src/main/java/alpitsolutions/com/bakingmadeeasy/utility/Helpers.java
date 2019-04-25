@@ -20,7 +20,7 @@ import static android.content.Context.WINDOW_SERVICE;
 
 public class Helpers {
 
-    private static final Map<String,Integer> measureTypes;
+    private static final Map<String,Integer> sMeasureTypes;
 
     static {
         Map<String,Integer> map = new HashMap();
@@ -31,7 +31,7 @@ public class Helpers {
         map.put("K",R.string.measure_unit_k);
         map.put("UNIT",R.string.measure_unit_unit);
 
-        measureTypes = Collections.unmodifiableMap(map);
+        sMeasureTypes = Collections.unmodifiableMap(map);
     }
 
     /**
@@ -89,8 +89,8 @@ public class Helpers {
     public static String getMeasureUnit(Activity context, String measureKey)
     {
         String measure;
-        if (measureTypes.containsKey(measureKey))
-            measure = context.getText(measureTypes.get(measureKey)).toString();
+        if (sMeasureTypes.containsKey(measureKey))
+            measure = context.getText(sMeasureTypes.get(measureKey)).toString();
         else
             measure = measureKey;
 

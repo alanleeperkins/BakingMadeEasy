@@ -9,10 +9,10 @@ import alpitsolutions.com.bakingmadeeasy.utility.Constants;
 
 public class RecipeOverviewViewModelFactory implements ViewModelProvider.Factory{
 
-    private static final String TAG = Constants.TAG_FILTER + RecipeOverviewViewModelFactory.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipeOverviewViewModelFactory.class.getSimpleName();
 
-    private Application application;
-    private int recipeId;
+    private Application mApplication;
+    private int mRecipeId;
 
     /**
      *
@@ -21,15 +21,15 @@ public class RecipeOverviewViewModelFactory implements ViewModelProvider.Factory
      */
     public RecipeOverviewViewModelFactory(@NonNull Application application, @NonNull int recipeId)
     {
-        this.application = application;
-        this.recipeId = recipeId;
+        this.mApplication = application;
+        this.mRecipeId = recipeId;
     }
 
     @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new RecipeOverviewViewModel(application, recipeId);
+        return (T) new RecipeOverviewViewModel(mApplication, mRecipeId);
     }
 
 

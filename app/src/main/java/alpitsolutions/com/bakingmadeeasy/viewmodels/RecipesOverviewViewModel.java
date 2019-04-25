@@ -15,19 +15,18 @@ import alpitsolutions.com.bakingmadeeasy.utility.Constants;
 
 public class RecipesOverviewViewModel extends AndroidViewModel {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipesOverviewViewModel.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipesOverviewViewModel.class.getSimpleName();
 
-    private BakingMadeEasyRepository bakingMadeEasyRepositoryRepository;
-    private @Nullable
-    LiveData<List<RecipeEntity>> recipes;
+    private BakingMadeEasyRepository mBakingMadeEasyRepositoryRepository;
+    private @Nullable LiveData<List<RecipeEntity>> mRecipes;
 
     public RecipesOverviewViewModel(@NonNull Application application) {
         super(application);
 
-        bakingMadeEasyRepositoryRepository = BakingMadeEasyRepository.getInstance(this.getApplication());
-        Log.d(TAG, "RecipesOverviewViewModel init");
+        mBakingMadeEasyRepositoryRepository = BakingMadeEasyRepository.getInstance(this.getApplication());
+        Log.d(sTAG, "RecipesOverviewViewModel init");
     }
 
 
-    public BakingMadeEasyRepository getRepository() { return bakingMadeEasyRepositoryRepository; }
+    public BakingMadeEasyRepository getRepository() { return mBakingMadeEasyRepositoryRepository; }
 }

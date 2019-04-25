@@ -5,20 +5,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.solver.widgets.Helper;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.mbms.MbmsErrors;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -35,29 +32,29 @@ import butterknife.ButterKnife;
 
 public class RecipesOverviewFragment extends Fragment {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipesOverviewFragment.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipesOverviewFragment.class.getSimpleName();
 
-    private static final int MAX_COLUMNS_PHONE_VIEW = 1;
-    private static final int MAX_COLUMNS_TABLET_VIEW = 2;
+    private static final int sMAX_COLUMNS_PHONE_VIEW = 1;
+    private static final int sMAX_COLUMNS_TABLET_VIEW = 2;
 
-    private RecipeOverviewAdapter recipeOverviewAdapter;
+    private RecipeOverviewAdapter sRecipeOverviewAdapter;
 
-    @BindView(R.id.coord_layout_recipes) CoordinatorLayout coord_layout_recipes;
-    @BindView(R.id.rvwRecipesOverview) RecyclerView rvwRecipeOverview;
-    @BindView(R.id.pbarRecipesLoading) ProgressBar pbarRecipesLoading;
-    @BindView(R.id.txtConnectionError) TextView txtConnectionError;
+    @BindView(R.id.coord_layout_recipes) CoordinatorLayout mClyRecipes;
+    @BindView(R.id.rvwRecipesOverview) RecyclerView mRvwRecipeOverview;
+    @BindView(R.id.pbarRecipesLoading) ProgressBar mPbarRecipesLoading;
+    @BindView(R.id.txtConnectionError) TextView mTxtConnectionError;
 
-    private OnRecipeClickCallback recipeClickCallback;
+    private OnRecipeClickCallback mRecipeClickCallback;
     public interface OnRecipeClickCallback {
         void onRecipeItemClick(RecipeEntity recipe);
     }
 
-    private OnRecipesOverviewBuildUICallback onRecipesOverviewBuildUICallback;
+    private OnRecipesOverviewBuildUICallback mOnRecipesOverviewBuildUICallback;
     public interface OnRecipesOverviewBuildUICallback {
         void onRecipesOverviewBuildUI(Boolean buildSuccessful);
     }
 
-    private RecipesOverviewViewModel viewModel;
+    private RecipesOverviewViewModel mViewModel;
 
     /**
      *
@@ -72,17 +69,17 @@ public class RecipesOverviewFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG,"RecipesOverviewFragment onAttach");
+        Log.d(sTAG,"RecipesOverviewFragment onAttach");
         // This makes sure that the host activity has implemented the callback interface
         // If not, it throws an exception
         try {
-            recipeClickCallback = (OnRecipeClickCallback) context;
+            mRecipeClickCallback = (OnRecipeClickCallback) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnRecipeClickCallback");
         }
         try {
-            onRecipesOverviewBuildUICallback = (OnRecipesOverviewBuildUICallback) context;
+            mOnRecipesOverviewBuildUICallback = (OnRecipesOverviewBuildUICallback) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnRecipesOverviewBuildUICallback");
@@ -95,7 +92,7 @@ public class RecipesOverviewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG,"RecipesOverviewFragment onResume");
+        Log.d(sTAG,"RecipesOverviewFragment onResume");
     }
 
     /**
@@ -104,7 +101,7 @@ public class RecipesOverviewFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"RecipesOverviewFragment onDestroy");
+        Log.d(sTAG,"RecipesOverviewFragment onDestroy");
     }
 
     /**
@@ -113,7 +110,7 @@ public class RecipesOverviewFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG,"RecipesOverviewFragment onStart");
+        Log.d(sTAG,"RecipesOverviewFragment onStart");
     }
 
     /**
@@ -122,7 +119,7 @@ public class RecipesOverviewFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG,"RecipesOverviewFragment onPause");
+        Log.d(sTAG,"RecipesOverviewFragment onPause");
     }
 
     /**
@@ -131,7 +128,7 @@ public class RecipesOverviewFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG,"RecipesOverviewFragment onDestroyView");
+        Log.d(sTAG,"RecipesOverviewFragment onDestroyView");
     }
 
     /**
@@ -142,7 +139,7 @@ public class RecipesOverviewFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG,"RecipesOverviewFragment onViewCreated");
+        Log.d(sTAG,"RecipesOverviewFragment onViewCreated");
     }
 
     /**
@@ -155,16 +152,16 @@ public class RecipesOverviewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "RecipesOverviewFragment onCreateView");
+        Log.d(sTAG, "RecipesOverviewFragment onCreateView");
 
         final View rootView = inflater.inflate(R.layout.fragment_recipes_overview, container, false);
 
         ButterKnife.bind(this, rootView);
 
         if(Helpers.isTabletScreenActive(getActivity())) {
-            rvwRecipeOverview.setLayoutManager(new GridLayoutManager(getActivity(),MAX_COLUMNS_TABLET_VIEW));
+            mRvwRecipeOverview.setLayoutManager(new GridLayoutManager(getActivity(), sMAX_COLUMNS_TABLET_VIEW));
         }else {
-            rvwRecipeOverview.setLayoutManager(new GridLayoutManager(getActivity(),MAX_COLUMNS_PHONE_VIEW));
+            mRvwRecipeOverview.setLayoutManager(new GridLayoutManager(getActivity(), sMAX_COLUMNS_PHONE_VIEW));
         }
 
         // Return the root view
@@ -189,7 +186,7 @@ public class RecipesOverviewFragment extends Fragment {
      */
     private void setupViewModel()
     {
-        viewModel = ViewModelProviders.of(this).get(RecipesOverviewViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(RecipesOverviewViewModel.class);
     }
 
     /***
@@ -198,7 +195,7 @@ public class RecipesOverviewFragment extends Fragment {
      */
     private Boolean reloadActiveData()
     {
-        Log.d(TAG,"reloadActiveData");
+        Log.d(sTAG,"reloadActiveData");
 
         getAllRecipes();
 
@@ -213,10 +210,10 @@ public class RecipesOverviewFragment extends Fragment {
     {
         if (Helpers.checkConnection(getActivity()) ==false) {
 
-            txtConnectionError.setVisibility(View.VISIBLE);
-            pbarRecipesLoading.setVisibility(View.INVISIBLE);
+            mTxtConnectionError.setVisibility(View.VISIBLE);
+            mPbarRecipesLoading.setVisibility(View.INVISIBLE);
 
-            Snackbar snackbar = Snackbar.make(coord_layout_recipes,
+            Snackbar snackbar = Snackbar.make(mClyRecipes,
                     R.string.error_no_internet_connection, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.retry, new View.OnClickListener() {
                         @Override
@@ -229,44 +226,44 @@ public class RecipesOverviewFragment extends Fragment {
             return;
         }
 
-        viewModel.getRepository().getAllRecipes(new OnGetRecipesCallback() {
+        mViewModel.getRepository().getAllRecipes(new OnGetRecipesCallback() {
             @Override
             public void onStarted()
             {
-                Log.d(TAG,"onStarted fetching recipes");
-                pbarRecipesLoading.setVisibility(View.VISIBLE);
-                txtConnectionError.setVisibility(View.INVISIBLE);
+                Log.d(sTAG,"onStarted fetching recipes");
+                mPbarRecipesLoading.setVisibility(View.VISIBLE);
+                mTxtConnectionError.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onSuccess(List<RecipeEntity> recipes) {
-                Log.d(TAG,"onSuccess recipes="+recipes.size());
+                Log.d(sTAG,"onSuccess recipes="+recipes.size());
 
-                if (recipeOverviewAdapter == null)
-                    recipeOverviewAdapter = new RecipeOverviewAdapter(recipes, clickOnRecipeCallback);
+                if (sRecipeOverviewAdapter == null)
+                    sRecipeOverviewAdapter = new RecipeOverviewAdapter(recipes, clickOnRecipeCallback);
 
-                rvwRecipeOverview.setAdapter(recipeOverviewAdapter);
-                onRecipesOverviewBuildUICallback.onRecipesOverviewBuildUI(true);
+                mRvwRecipeOverview.setAdapter(sRecipeOverviewAdapter);
+                mOnRecipesOverviewBuildUICallback.onRecipesOverviewBuildUI(true);
 
                 //check for arguments (loading a recipe)
-                if (Globals.getInstance().isActiveAutoLoadRecipe) {
-                    Log.d(TAG,"AUTOLOAD RECIPE #"+Globals.getInstance().idAutoLoadRecipe);
+                if (Globals.getInstance().mIsActiveAutoLoadRecipe) {
+                    Log.d(sTAG,"AUTOLOAD RECIPE #"+Globals.getInstance().mIdAutoLoadRecipe);
 
                     // simulate the 'click' on an recipe
-                    RecipeEntity dummy_recipe = new RecipeEntity(Globals.getInstance().idAutoLoadRecipe,"",0,"",null,null);
-                    recipeClickCallback.onRecipeItemClick(dummy_recipe);
+                    RecipeEntity dummy_recipe = new RecipeEntity(Globals.getInstance().mIdAutoLoadRecipe,"",0,"",null,null);
+                    mRecipeClickCallback.onRecipeItemClick(dummy_recipe);
                 }
 
-                pbarRecipesLoading.setVisibility(View.INVISIBLE);
-                txtConnectionError.setVisibility(View.INVISIBLE);
+                mPbarRecipesLoading.setVisibility(View.INVISIBLE);
+                mTxtConnectionError.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onError() {
-                onRecipesOverviewBuildUICallback.onRecipesOverviewBuildUI(false);
-                Log.d(TAG,"onError fetching recipes");
-                pbarRecipesLoading.setVisibility(View.INVISIBLE);
-                txtConnectionError.setVisibility(View.INVISIBLE);
+                mOnRecipesOverviewBuildUICallback.onRecipesOverviewBuildUI(false);
+                Log.d(sTAG,"onError fetching recipes");
+                mPbarRecipesLoading.setVisibility(View.INVISIBLE);
+                mTxtConnectionError.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -278,8 +275,8 @@ public class RecipesOverviewFragment extends Fragment {
     {
         @Override
         public void onRecipeItemClick(RecipeEntity recipe) {
-        Log.v(TAG,"clickOnRecipeCallback name='" + recipe.getName() + "' clicked.");
-        recipeClickCallback.onRecipeItemClick(recipe);
+        Log.v(sTAG,"clickOnRecipeCallback name='" + recipe.getName() + "' clicked.");
+        mRecipeClickCallback.onRecipeItemClick(recipe);
         }
     };
 }

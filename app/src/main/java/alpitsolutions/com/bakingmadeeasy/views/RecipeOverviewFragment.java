@@ -38,21 +38,20 @@ import butterknife.ButterKnife;
 
 public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEntryUpdateCallback {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipeOverviewFragment.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipeOverviewFragment.class.getSimpleName();
 
-    private RecipeEntity recipeData=null;
-    private Integer recipeId = -1;
-    private boolean isFavorite;
+    private RecipeEntity mRecipeData =null;
+    private Integer mRecipeId = -1;
+    private boolean mIsFavorite;
+    private RecipeOverviewViewModel mViewModel;
 
-    private RecipeOverviewViewModel viewModel;
-
-    @BindView(R.id.lilIngredients) TableLayout lilIngredients;
-    @BindView(R.id.tlyRecipeSteps) TableLayout tlyRecipeSteps;
-    @BindView(R.id.txtRecipeTitle) TextView txtRecipeTitle;
-    @BindView(R.id.imgRecipeToggleFavorite) ImageView ivRecipeToggleFavorite;
+    @BindView(R.id.lilIngredients) TableLayout mLilIngredients;
+    @BindView(R.id.tlyRecipeSteps) TableLayout mTlyRecipeSteps;
+    @BindView(R.id.txtRecipeTitle) TextView mTxtRecipeTitle;
+    @BindView(R.id.imgRecipeToggleFavorite) ImageView mIvwRecipeToggleFavorite;
 
     // Define a new interface OnRecipeStepClickCallback that triggers a callback in the host activity
-    OnRecipeStepClickCallback recipeStepClickCallback;
+    OnRecipeStepClickCallback mOnRecipeStepClickCallback;
 
     /***
      * OnRecipeStepClickCallback interface, calls a method in the host activity named onRecipeStepSelected
@@ -74,7 +73,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
      * @param recipeId
      */
     public void setRecipeId(Integer recipeId) {
-        this.recipeId = recipeId;
+        this.mRecipeId = recipeId;
     }
 
     /***
@@ -84,10 +83,10 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG, "RecipeOverviewFragment onAttach");
+        Log.d(sTAG, "RecipeOverviewFragment onAttach");
 
         try {
-            recipeStepClickCallback = (OnRecipeStepClickCallback) context;
+            mOnRecipeStepClickCallback = (OnRecipeStepClickCallback) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnRecipeStepClickCallback");
@@ -100,7 +99,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "RecipeOverviewFragment onStart");
+        Log.d(sTAG, "RecipeOverviewFragment onStart");
     }
 
     /***
@@ -109,7 +108,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "RecipeOverviewFragment onResume");
+        Log.d(sTAG, "RecipeOverviewFragment onResume");
     }
 
 
@@ -119,7 +118,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "RecipeOverviewFragment onPause");
+        Log.d(sTAG, "RecipeOverviewFragment onPause");
     }
 
     /***
@@ -128,7 +127,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "RecipeOverviewFragment onDestroy");
+        Log.d(sTAG, "RecipeOverviewFragment onDestroy");
     }
 
     /**
@@ -136,8 +135,8 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
      */
     @Override
     public void onSaveInstanceState(Bundle currentState) {
-        currentState.putInt(Constants.KEY_RECIPE_ID, recipeId);
-        currentState.putBoolean(Constants.KEY_IS_FAVORITE, isFavorite);
+        currentState.putInt(Constants.sKEY_RECIPE_ID, mRecipeId);
+        currentState.putBoolean(Constants.sKEY_IS_FAVORITE, mIsFavorite);
     }
 
     /***
@@ -146,7 +145,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, "RecipeOverviewFragment onDestroyView");
+        Log.d(sTAG, "RecipeOverviewFragment onDestroyView");
     }
 
     /***
@@ -157,7 +156,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG, "RecipeOverviewFragment onViewCreated");
+        Log.d(sTAG, "RecipeOverviewFragment onViewCreated");
     }
 
     /***
@@ -170,16 +169,16 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "RecipeOverviewFragment onCreateView");
+        Log.d(sTAG, "RecipeOverviewFragment onCreateView");
 
         final View rootView = inflater.inflate(R.layout.fragment_recipe_overview, container, false);
 
         ButterKnife.bind(this, rootView);
 
-        isFavorite = false;
+        mIsFavorite = false;
         if (savedInstanceState != null) {
-            isFavorite = savedInstanceState.getBoolean(Constants.KEY_IS_FAVORITE);
-            recipeId = savedInstanceState.getInt(Constants.KEY_RECIPE_ID);
+            mIsFavorite = savedInstanceState.getBoolean(Constants.sKEY_IS_FAVORITE);
+            mRecipeId = savedInstanceState.getInt(Constants.sKEY_RECIPE_ID);
         }else {
 
         }
@@ -197,7 +196,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
 
         setupViewModel();
 
-        ivRecipeToggleFavorite.setOnClickListener(new View.OnClickListener() {
+        mIvwRecipeToggleFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toggleRecipeFavoriteStatus();
@@ -212,13 +211,13 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
      */
     private void setupViewModel()
     {
-        RecipeOverviewViewModelFactory factory = new RecipeOverviewViewModelFactory(getActivity().getApplication(), recipeId);
-        viewModel = ViewModelProviders.of(this, factory).get(RecipeOverviewViewModel.class);
+        RecipeOverviewViewModelFactory factory = new RecipeOverviewViewModelFactory(getActivity().getApplication(), mRecipeId);
+        mViewModel = ViewModelProviders.of(this, factory).get(RecipeOverviewViewModel.class);
 
-        viewModel.getFavorite().observe(this, new Observer<TbRecipeEntity>() {
+        mViewModel.getFavorite().observe(this, new Observer<TbRecipeEntity>() {
             @Override
             public void onChanged(@Nullable TbRecipeEntity tbRecipeEntity) {
-                Log.d(TAG, "receiving database update from LiveData");
+                Log.d(sTAG, "receiving database update from LiveData");
                 updateIsFavorite((tbRecipeEntity!=null));
             }
         });
@@ -230,24 +229,24 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
      */
     private Boolean reloadRecipeData()
     {
-        Log.d(TAG,"reloadRecipeData");
+        Log.d(sTAG,"reloadRecipeData");
 
-        viewModel.getRepository().remoteRepository.getRecipeData(recipeId, new OnGetRecipeCallback() {
+        mViewModel.getRepository().mRemoteRepository.getRecipeData(mRecipeId, new OnGetRecipeCallback() {
 
             @Override
             public void onStarted() {
-                Log.d(TAG,"reloadRecipeData onStarted");
+                Log.d(sTAG,"reloadRecipeData onStarted");
             }
 
             @Override
             public void onSuccess(RecipeEntity recipe) {
-                Log.d(TAG,"reloadData onSuccess");
-                Log.d(TAG,recipe.toString());
-                recipeData = recipe;
+                Log.d(sTAG,"reloadData onSuccess");
+                Log.d(sTAG,recipe.toString());
+                mRecipeData = recipe;
 
                 getActivity().setTitle("Recipe");
 
-                txtRecipeTitle.setText(recipe.getName());
+                mTxtRecipeTitle.setText(recipe.getName());
 
                 updateIngredients(recipe.getIngredients());
                 updateSteps(recipe.getId(),recipe.getSteps());
@@ -255,7 +254,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
 
             @Override
             public void onError() {
-                Log.d(TAG,"reloadRecipeData onError");
+                Log.d(sTAG,"reloadRecipeData onError");
             }
         });
 
@@ -283,7 +282,7 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
 
             txtNameIngredient.setText(ingredient.getIngredient());
 
-            lilIngredients.addView(tr);
+            mLilIngredients.addView(tr);
         }
     }
 
@@ -303,11 +302,11 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
             yourButton.setGravity(Gravity.LEFT| Gravity.CENTER_VERTICAL);
             yourButton.setTag(step.getId());
             yourButton.setText(buttonText);
-            tlyRecipeSteps.addView(yourButton);
+            mTlyRecipeSteps.addView(yourButton);
             yourButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    recipeStepClickCallback.onRecipeStepItemClicked(recipeId, step.getId());
+                    mOnRecipeStepClickCallback.onRecipeStepItemClicked(recipeId, step.getId());
                 }
             });
         }
@@ -319,9 +318,9 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
      */
     private void updateIsFavorite(Boolean isFavorite)
     {
-        this.isFavorite = isFavorite;
-        Log.v(TAG,"updateIsFavorite="+this.isFavorite);
-        showRecipeFavoriteStateOnUI(this.isFavorite);
+        this.mIsFavorite = isFavorite;
+        Log.v(sTAG,"updateIsFavorite="+this.mIsFavorite);
+        showRecipeFavoriteStateOnUI(this.mIsFavorite);
     }
 
     /**
@@ -347,17 +346,17 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
      */
     private void toggleRecipeFavoriteStatus()
     {
-        if (isFavorite)
+        if (mIsFavorite)
         {
-            viewModel.getRepository().removeAsFavoriteByRecipeId(recipeId,this);
+            mViewModel.getRepository().removeAsFavoriteByRecipeId(mRecipeId,this);
         }
         else
         {
-            if (recipeData==null)
+            if (mRecipeData ==null)
                 return;
 
-            TbRecipeEntity new_fav_recipe = Converter.ToTbRecipeEntity(recipeData);
-            viewModel.getRepository().addAsFavorite(new_fav_recipe,this);
+            TbRecipeEntity new_fav_recipe = Converter.ToTbRecipeEntity(mRecipeData);
+            mViewModel.getRepository().addAsFavorite(new_fav_recipe,this);
         }
     }
 
@@ -370,11 +369,11 @@ public class RecipeOverviewFragment extends Fragment implements OnGetFavoriteEnt
     {
         if (favoriteState)
         {
-            ivRecipeToggleFavorite.setBackgroundResource(R.drawable.ic_star_golden_light);
+            mIvwRecipeToggleFavorite.setBackgroundResource(R.drawable.ic_star_golden_light);
         }
         else
         {
-            ivRecipeToggleFavorite.setBackgroundResource(R.drawable.ic_star_grey_light);
+            mIvwRecipeToggleFavorite.setBackgroundResource(R.drawable.ic_star_grey_light);
         }
 
         RecipeWidgetProvider.sendRefreshBroadcast(this.getActivity());

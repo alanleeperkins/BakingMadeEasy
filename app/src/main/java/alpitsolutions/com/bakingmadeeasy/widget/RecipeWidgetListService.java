@@ -7,7 +7,7 @@ import alpitsolutions.com.bakingmadeeasy.utility.Constants;
 
 public class RecipeWidgetListService extends RemoteViewsService {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipeWidgetListService.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipeWidgetListService.class.getSimpleName();
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {

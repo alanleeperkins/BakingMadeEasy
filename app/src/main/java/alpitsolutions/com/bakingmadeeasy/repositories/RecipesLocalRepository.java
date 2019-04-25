@@ -1,6 +1,5 @@
 package alpitsolutions.com.bakingmadeeasy.repositories;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -18,13 +17,11 @@ import alpitsolutions.com.bakingmadeeasy.interfaces.OnGetFavoritesCallback;
 import alpitsolutions.com.bakingmadeeasy.utility.Constants;
 
 public class RecipesLocalRepository {
-    private static final String TAG = Constants.TAG_FILTER + RecipesLocalRepository.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipesLocalRepository.class.getSimpleName();
 
-    private static RecipesLocalRepository repository;
-
-    public RecipesDao recipesDao;
-    public IngredientsDao ingredientsDao;
-    public StepsDao stepsDao;
+    public RecipesDao mRecipesDao;
+    public IngredientsDao mIngredientsDao;
+    public StepsDao mStepsDao;
 
     /**
      *
@@ -32,21 +29,21 @@ public class RecipesLocalRepository {
      */
     public RecipesLocalRepository(Context context) {
         RecipeDatabase database = RecipeDatabase.getInstance(context);
-        recipesDao = database.getRecipesDao();
-        ingredientsDao = database.getIngredientsDao();
-        stepsDao = database.getStepsDao();
+        mRecipesDao = database.getRecipesDao();
+        mIngredientsDao = database.getIngredientsDao();
+        mStepsDao = database.getStepsDao();
     }
 
     public void insert(TbRecipeEntity favorite, OnGetFavoriteEntryUpdateCallback listener) {
-        new InsertLocalAsyncTask(recipesDao, ingredientsDao, stepsDao, listener).execute(favorite);
+        new InsertLocalAsyncTask(mRecipesDao, mIngredientsDao, mStepsDao, listener).execute(favorite);
     }
 
     public void deleteByRecipeId(Integer recipeId, OnGetFavoriteEntryUpdateCallback listener) {
-        new DeleteLocalAsyncTask(recipesDao,listener).execute(recipeId);
+        new DeleteLocalAsyncTask(mRecipesDao,listener).execute(recipeId);
     }
 
     public void getListOfAllFavorites(OnGetFavoritesCallback listener) {
-        new GetAllLocalAsyncTask(recipesDao, listener).execute();
+        new GetAllLocalAsyncTask(mRecipesDao, listener).execute();
     }
 
     /**

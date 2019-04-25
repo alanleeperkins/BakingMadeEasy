@@ -20,13 +20,13 @@ import alpitsolutions.com.bakingmadeeasy.views.RecipesOverviewFragment;
 
 public class RecipesOverviewActivity extends AppCompatActivity implements RecipesOverviewFragment.OnRecipeClickCallback,RecipesOverviewFragment.OnRecipesOverviewBuildUICallback {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipesOverviewActivity.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipesOverviewActivity.class.getSimpleName();
 
     // The Idling Resource which will be null in production.
     @Nullable
-    private SimpleIdlingResource idlingResourceUpdateUI;
+    private SimpleIdlingResource mIdlingResourceUpdateUI;
 
-    private RecipesOverviewViewModel viewModel;
+    private RecipesOverviewViewModel mViewModel;
 
     /***
      *
@@ -37,15 +37,15 @@ public class RecipesOverviewActivity extends AppCompatActivity implements Recipe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes_overview);
 
-        Globals.getInstance().isActiveAutoLoadRecipe = false;
-        Globals.getInstance().idAutoLoadRecipe = -1;
+        Globals.getInstance().mIsActiveAutoLoadRecipe = false;
+        Globals.getInstance().mIdAutoLoadRecipe = -1;
 
         if (savedInstanceState == null) {
 
-            Globals.getInstance().idAutoLoadRecipe = getIntent().getIntExtra(Constants.KEY_RECIPE_ID, -1);
-            if (Globals.getInstance().idAutoLoadRecipe != -1) {
-                Globals.getInstance().isActiveAutoLoadRecipe = true;
-                Log.d(TAG,"idAutoLoadRecipe = "+Globals.getInstance().idAutoLoadRecipe);
+            Globals.getInstance().mIdAutoLoadRecipe = getIntent().getIntExtra(Constants.sKEY_RECIPE_ID, -1);
+            if (Globals.getInstance().mIdAutoLoadRecipe != -1) {
+                Globals.getInstance().mIsActiveAutoLoadRecipe = true;
+                Log.d(sTAG,"mIdAutoLoadRecipe = "+Globals.getInstance().mIdAutoLoadRecipe);
             }
         }
 
@@ -56,8 +56,8 @@ public class RecipesOverviewActivity extends AppCompatActivity implements Recipe
          * For testings purposes we need the IdlingResource, Espresso will use that variable
          * idleState=true means the Espresso can perform the next action
          */
-        if (idlingResourceUpdateUI != null) {
-            idlingResourceUpdateUI.setIdleState(false);
+        if (mIdlingResourceUpdateUI != null) {
+            mIdlingResourceUpdateUI.setIdleState(false);
         }
 
         Helpers.setScreenOrientation(this);
@@ -70,17 +70,17 @@ public class RecipesOverviewActivity extends AppCompatActivity implements Recipe
     @VisibleForTesting
     @NonNull
     public IdlingResource getIdlingResourceUpdateUI() {
-        if (idlingResourceUpdateUI == null) {
-            idlingResourceUpdateUI = new SimpleIdlingResource();
+        if (mIdlingResourceUpdateUI == null) {
+            mIdlingResourceUpdateUI = new SimpleIdlingResource();
         }
-        return idlingResourceUpdateUI;
+        return mIdlingResourceUpdateUI;
     }
 
     /***
      *
      */
     private void setupViewModel() {
-        viewModel = ViewModelProviders.of(this).get(RecipesOverviewViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(RecipesOverviewViewModel.class);
     }
 
     /***
@@ -90,7 +90,7 @@ public class RecipesOverviewActivity extends AppCompatActivity implements Recipe
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG,"onSaveInstanceState");
+        Log.d(sTAG,"onSaveInstanceState");
     }
 
     /**
@@ -99,7 +99,7 @@ public class RecipesOverviewActivity extends AppCompatActivity implements Recipe
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG,"onPause");
+        Log.d(sTAG,"onPause");
     }
 
     /***
@@ -108,7 +108,7 @@ public class RecipesOverviewActivity extends AppCompatActivity implements Recipe
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume");
+        Log.d(sTAG,"onResume");
     }
 
     /**
@@ -117,20 +117,20 @@ public class RecipesOverviewActivity extends AppCompatActivity implements Recipe
      */
     @Override
     public void onRecipeItemClick(RecipeEntity recipe) {
-        Log.d(TAG,"onRecipeItemClick " + recipe.toString());
+        Log.d(sTAG,"onRecipeItemClick " + recipe.toString());
 
         if (Helpers.isTabletScreenActive(this))
         {
-            Log.d(TAG,"Tablet Screen ");
+            Log.d(sTAG,"Tablet Screen ");
         }
         else
         {
-            Log.d(TAG,"Phone Screen ");
+            Log.d(sTAG,"Phone Screen ");
         }
         Bundle b = new Bundle();
-        b.putInt(Constants.KEY_RECIPE_ID, recipe.getId());
+        b.putInt(Constants.sKEY_RECIPE_ID, recipe.getId());
         if(recipe.getSteps() !=null && recipe.getSteps().size()>0)
-            b.putInt(Constants.KEY_RECIPE_STEP_ID, 0);
+            b.putInt(Constants.sKEY_RECIPE_STEP_ID, 0);
 
         final Intent intent = new Intent(this, RecipeOverviewActivity.class);
         intent.putExtras(b);
@@ -143,8 +143,8 @@ public class RecipesOverviewActivity extends AppCompatActivity implements Recipe
      */
     @Override
     public void onRecipesOverviewBuildUI(Boolean buildSuccessful) {
-        if (idlingResourceUpdateUI != null) {
-            idlingResourceUpdateUI.setIdleState(true);
+        if (mIdlingResourceUpdateUI != null) {
+            mIdlingResourceUpdateUI.setIdleState(true);
         }
     }
 }

@@ -13,10 +13,10 @@ import alpitsolutions.com.bakingmadeeasy.utility.Constants;
 
 public class RecipeOverviewViewModel extends AndroidViewModel {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipeOverviewViewModel.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipeOverviewViewModel.class.getSimpleName();
 
-    private BakingMadeEasyRepository bakingMadeEasyRepositoryRepository;
-    private @Nullable LiveData<TbRecipeEntity> favoritesEntityLiveData;
+    private BakingMadeEasyRepository mBakingMadeEasyRepositoryRepository;
+    private @Nullable LiveData<TbRecipeEntity> mFavoritesEntityLiveData;
 
     /**
      *
@@ -26,15 +26,15 @@ public class RecipeOverviewViewModel extends AndroidViewModel {
     public RecipeOverviewViewModel(@NonNull Application application,@NonNull int recipeId) {
         super(application);
 
-        bakingMadeEasyRepositoryRepository = BakingMadeEasyRepository.getInstance(this.getApplication());
-        favoritesEntityLiveData = bakingMadeEasyRepositoryRepository.localRepository.recipesDao.getRecipeByRecipeId(recipeId);
+        mBakingMadeEasyRepositoryRepository = BakingMadeEasyRepository.getInstance(this.getApplication());
+        mFavoritesEntityLiveData = mBakingMadeEasyRepositoryRepository.mLocalRepository.mRecipesDao.getRecipeByRecipeId(recipeId);
 
-        Log.d(TAG, "RecipeOverviewViewModel init");
+        Log.d(sTAG, "RecipeOverviewViewModel init");
     }
 
     public LiveData<TbRecipeEntity> getFavorite() {
-        return favoritesEntityLiveData;
+        return mFavoritesEntityLiveData;
     }
 
-    public BakingMadeEasyRepository getRepository() { return bakingMadeEasyRepositoryRepository; }
+    public BakingMadeEasyRepository getRepository() { return mBakingMadeEasyRepositoryRepository; }
 }

@@ -20,23 +20,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RecipesRemoteRepository {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipesRemoteRepository.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipesRemoteRepository.class.getSimpleName();
+    public static final String sRECIPES_CLOUDFRONT_BASE_URL = "https://d17h27t6h515a5.cloudfront.net/";
+    private static RecipesRemoteRepository sRepository;
 
-    public static final String RECIPES_CLOUDFRONT_BASE_URL = "https://d17h27t6h515a5.cloudfront.net/";
-
-    private static RecipesRemoteRepository repository;
-
-    private RecipeApi recipeApi;
-
-
-    private List<RecipeEntity> cacheData=null;
+    private RecipeApi mRecipeApi;
+    private List<RecipeEntity> mCacheData =null;
 
     /***
      *
      * @param recipeApi
      */
     private RecipesRemoteRepository(RecipeApi recipeApi) {
-        this.recipeApi = recipeApi;
+        this.mRecipeApi = recipeApi;
     }
 
     /***
@@ -44,16 +40,16 @@ public class RecipesRemoteRepository {
      * @return
      */
     public static RecipesRemoteRepository getInstance() {
-        if (repository == null) {
+        if (sRepository == null) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(RECIPES_CLOUDFRONT_BASE_URL)
+                    .baseUrl(sRECIPES_CLOUDFRONT_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            repository = new RecipesRemoteRepository(retrofit.create(RecipeApi.class));
+            sRepository = new RecipesRemoteRepository(retrofit.create(RecipeApi.class));
         }
 
-        return repository;
+        return sRepository;
     }
 
     /***
@@ -62,19 +58,19 @@ public class RecipesRemoteRepository {
      * @param recipeCallback
      */
     public void getRecipeData(int recipeId, final OnGetRecipeCallback recipeCallback) {
-        Log.d(TAG, "getRecipeData recipeId:"+recipeId);
+        Log.d(sTAG, "getRecipeData recipeId:"+recipeId);
         recipeCallback.onStarted();
 
-        if (cacheData == null || cacheData.size()==0) {
-            Log.d(TAG, "ERROR: getRecipeData cache is empty!");
+        if (mCacheData == null || mCacheData.size()==0) {
+            Log.d(sTAG, "ERROR: getRecipeData cache is empty!");
             recipeCallback.onError();
             return;
         }
 
-        for (RecipeEntity recipe:cacheData) {
+        for (RecipeEntity recipe: mCacheData) {
             if (recipe.getId().equals(recipeId)) {
                 // SUCCESS -> recipe found
-                Log.d(TAG, "SUCCESS: getRecipeData recipe found!");
+                Log.d(sTAG, "SUCCESS: getRecipeData recipe found!");
                 recipeCallback.onSuccess(recipe);
                 return;
             }
@@ -91,16 +87,16 @@ public class RecipesRemoteRepository {
      */
     public void getRecipeStep(@NonNull Integer recipeId, @NonNull Integer recipeStepId, final OnGetRecipeStepCallback recipeStepCallback)
     {
-        Log.d(TAG, "getRecipeStep recipeId:"+recipeId+" recipeStepId:"+recipeStepId);
+        Log.d(sTAG, "getRecipeStep recipeId:"+recipeId+" recipeStepId:"+recipeStepId);
         recipeStepCallback.onStarted();
 
-        if (cacheData == null || cacheData.size()==0) {
-            Log.d(TAG, "ERROR: getRecipeStep cache is empty!");
+        if (mCacheData == null || mCacheData.size()==0) {
+            Log.d(sTAG, "ERROR: getRecipeStep cache is empty!");
             recipeStepCallback.onError();
             return;
         }
 
-        for (RecipeEntity recipe:cacheData) {
+        for (RecipeEntity recipe: mCacheData) {
             if (recipe.getId().equals(recipeId)) {
                 if (recipe.getSteps()==null || recipe.getSteps().size()==0) {
                     recipeStepCallback.onError();
@@ -110,7 +106,7 @@ public class RecipesRemoteRepository {
                 for (RecipeStepEntity recipeStep:recipe.getSteps()) {
                     if (recipeStep.getId().equals(recipeStepId)) {
                         // SUCCESS -> step found
-                        Log.d(TAG, "SUCCESS: getRecipeStep recipe-step found!");
+                        Log.d(sTAG, "SUCCESS: getRecipeStep recipe-step found!");
                         recipeStepCallback.onSuccess(recipeStep);
                         return;
                     }
@@ -127,18 +123,18 @@ public class RecipesRemoteRepository {
      */
     public void getAllRecipes(final OnGetRecipesCallback recipeCallback) {
         recipeCallback.onStarted();
-        if (cacheData == null || cacheData.size()==0) {
-            Log.d(TAG, "getAllRecipes (refresh)");
+        if (mCacheData == null || mCacheData.size()==0) {
+            Log.d(sTAG, "getAllRecipes (refresh)");
             // refresh the cache
             Callback<List<RecipeEntity>> call = new Callback<List<RecipeEntity>>() {
                 @Override
                 public void onResponse(Call<List<RecipeEntity>> call, Response<List<RecipeEntity>> response) {
                     if (response.isSuccessful()) {
                         // update the cache
-                        cacheData = response.body();
-                        if (cacheData !=null) {
+                        mCacheData = response.body();
+                        if (mCacheData !=null) {
                             // send the cache
-                            recipeCallback.onSuccess(cacheData);
+                            recipeCallback.onSuccess(mCacheData);
                         }
                         else {
                             recipeCallback.onError();
@@ -155,14 +151,14 @@ public class RecipesRemoteRepository {
                 }
             };
 
-            recipeApi.getAllRecipes().enqueue(call);
+            mRecipeApi.getAllRecipes().enqueue(call);
         }
         else
         {
-            Log.d(TAG, "getAllRecipes (already cached)");
-            if (cacheData !=null) {
+            Log.d(sTAG, "getAllRecipes (already cached)");
+            if (mCacheData !=null) {
                 // send the cache
-                recipeCallback.onSuccess(cacheData);
+                recipeCallback.onSuccess(mCacheData);
             }
             else {
                 recipeCallback.onError();

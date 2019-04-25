@@ -9,20 +9,20 @@ import android.util.Log;
 @Database(entities = {TbRecipeEntity.class, TbIngredientEntity.class, TbStepEntity.class}, version = 1, exportSchema = false)
 public abstract class RecipeDatabase extends RoomDatabase {
 
-    private static final String TAG = RecipeDatabase.class.getSimpleName();
-    private static final String DATABASE_NAME = "recipes";
+    private static final String sTAG = RecipeDatabase.class.getSimpleName();
+    private static final String sDATABASE_NAME = "recipes";
     private static RecipeDatabase sInstance;
 
     public static synchronized RecipeDatabase getInstance(Context context)
     {
         if (sInstance == null) {
-            Log.d(TAG, "Creating new database instance");
+            Log.d(sTAG, "Creating new database instance");
             sInstance = Room.databaseBuilder(context,
-                    RecipeDatabase.class, RecipeDatabase.DATABASE_NAME)
+                    RecipeDatabase.class, RecipeDatabase.sDATABASE_NAME)
                     .fallbackToDestructiveMigration()
                     .build();
         }
-        Log.d(TAG, "Getting the database instance");
+        Log.d(sTAG, "Getting the database instance");
         return sInstance;
     }
 

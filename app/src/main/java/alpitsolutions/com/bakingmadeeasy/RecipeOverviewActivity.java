@@ -13,31 +13,31 @@ import alpitsolutions.com.bakingmadeeasy.views.RecipeStepFragment;
 
 public class RecipeOverviewActivity extends AppCompatActivity implements RecipeOverviewFragment.OnRecipeStepClickCallback {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipeOverviewActivity.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipeOverviewActivity.class.getSimpleName();
 
     // Track whether to display a two-pane or single-pane UI
     // A single-pane display refers to phone screens, and two-pane to larger tablet screens
-    private Boolean isSetTwoPaneMode;
+    private Boolean mIsSetTwoPaneMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
+        Log.d(sTAG, "onCreate");
 
         setContentView(R.layout.activity_recipe_overview);
         Helpers.setScreenOrientation(this);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // with the fragment_divider active we know whe have the two pane mode set
-        isSetTwoPaneMode = (findViewById(R.id.fragment_divider) != null);
-        Log.d(TAG,"isSetTwoPaneMode = " + isSetTwoPaneMode.toString());
+        mIsSetTwoPaneMode = (findViewById(R.id.fragment_divider) != null);
+        Log.d(sTAG,"mIsSetTwoPaneMode = " + mIsSetTwoPaneMode.toString());
 
         if (savedInstanceState == null) {
 
-            int recipeId = getIntent().getIntExtra(Constants.KEY_RECIPE_ID, 0);
-            int recipeStepId = getIntent().getIntExtra(Constants.KEY_RECIPE_STEP_ID, 0);
+            int recipeId = getIntent().getIntExtra(Constants.sKEY_RECIPE_ID, 0);
+            int recipeStepId = getIntent().getIntExtra(Constants.sKEY_RECIPE_STEP_ID, 0);
             if (recipeId<=0) {
-                Log.d(TAG, "ERROR: illegal recipeId:" + recipeId);
+                Log.d(sTAG, "ERROR: illegal recipeId:" + recipeId);
                 finish();
             }
 
@@ -51,7 +51,7 @@ public class RecipeOverviewActivity extends AppCompatActivity implements RecipeO
                     .commit();
 
 
-            if (isSetTwoPaneMode) {
+            if (mIsSetTwoPaneMode) {
                 replaceRecipeStepFragment(recipeId, recipeStepId);
             }
         }
@@ -79,18 +79,18 @@ public class RecipeOverviewActivity extends AppCompatActivity implements RecipeO
      */
     @Override
     public void onRecipeStepItemClicked(Integer recipeId, Integer recipeStepId) {
-        Log.d(TAG,"onRecipeStepItemClicked rc=" + recipeId + " stp="+recipeStepId);
+        Log.d(sTAG,"onRecipeStepItemClicked rc=" + recipeId + " stp="+recipeStepId);
 
-        if (isSetTwoPaneMode) {
-            Log.d(TAG,"onRecipeStepItemClicked isSetTwoPaneMode");
+        if (mIsSetTwoPaneMode) {
+            Log.d(sTAG,"onRecipeStepItemClicked mIsSetTwoPaneMode");
             replaceRecipeStepFragment(recipeId, recipeStepId);
         }
         else {
-            Log.d(TAG,"onRecipeStepItemClicked singlePaneMode");
+            Log.d(sTAG,"onRecipeStepItemClicked singlePaneMode");
 
             Bundle b = new Bundle();
-            b.putInt(Constants.KEY_RECIPE_ID, recipeId);
-            b.putInt(Constants.KEY_RECIPE_STEP_ID, recipeStepId);
+            b.putInt(Constants.sKEY_RECIPE_ID, recipeId);
+            b.putInt(Constants.sKEY_RECIPE_STEP_ID, recipeStepId);
 
             final Intent intent = new Intent(this, RecipeStepActivity.class);
             intent.putExtras(b);

@@ -3,7 +3,6 @@ package alpitsolutions.com.bakingmadeeasy.views;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,26 +38,20 @@ import butterknife.ButterKnife;
 
 public class RecipeStepFragment extends Fragment {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipeStepFragment.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipeStepFragment.class.getSimpleName();
 
-    private Integer recipeId = -1;
-    private Integer recipeStepId = -1;
+    private Integer mRecipeId = -1;
+    private Integer mRecipeStepId = -1;
+    private long mExoPlayerCurrentPosition =0;
+    private long mExoPlayerStopPosition = 0;
+    private Boolean mExoPlayerHasStopped = false;
 
+    @Nullable @BindView(R.id.exo_player_instruction) SimpleExoPlayerView mSimpleExoPlayerView;
+    @Nullable @BindView(R.id.txtShortDescription) TextView mTxtShortDescription;
+    @Nullable @BindView(R.id.txtDescription) TextView mTxtDescription;
 
-    private long exoPlayerCurrentPosition =0;
-    private long exoPlayerStopPosition = 0;
-
-    private Boolean exoPlayerHasStopped = false;
-    private Boolean exoPlayerIsFullScreen = false;
-
-
-    @Nullable @BindView(R.id.exo_player_instruction) SimpleExoPlayerView simpleExoPlayerView;
-    @Nullable @BindView(R.id.txtShortDescription) TextView txtShortDescription;
-    @Nullable @BindView(R.id.txtDescription) TextView txtDescription;
-
-    private SimpleExoPlayer simpleExoPlayer;
-
-    private RecipeStepViewModel viewModel;
+    private SimpleExoPlayer mSimpleExoPlayer;
+    private RecipeStepViewModel mViewModel;
 
     /***
      *
@@ -73,8 +66,8 @@ public class RecipeStepFragment extends Fragment {
      * @param recipeStepId
      */
     public void setRecipeStep(Integer recipeId, Integer recipeStepId) {
-        this.recipeId = recipeId;
-        this.recipeStepId = recipeStepId;
+        this.mRecipeId = recipeId;
+        this.mRecipeStepId = recipeStepId;
     }
 
     /***
@@ -84,62 +77,73 @@ public class RecipeStepFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(TAG,"RecipeStepFragment onAttach");
-
+        Log.d(sTAG,"RecipeStepFragment onAttach");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG,"RecipeStepFragment onResume");
+        Log.d(sTAG,"RecipeStepFragment onResume");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"RecipeStepFragment onDestroy");
+        Log.d(sTAG,"RecipeStepFragment onDestroy");
     }
     /**
      * Save the current state of this fragment
      */
     @Override
     public void onSaveInstanceState(Bundle currentState) {
-        currentState.putInt(Constants.KEY_RECIPE_ID, recipeId);
-        currentState.putInt(Constants.KEY_RECIPE_STEP_ID, recipeStepId);
+        currentState.putInt(Constants.sKEY_RECIPE_ID, mRecipeId);
+        currentState.putInt(Constants.sKEY_RECIPE_STEP_ID, mRecipeStepId);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG,"RecipeStepFragment onStart");
+        Log.d(sTAG,"RecipeStepFragment onStart");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG,"RecipeStepFragment onPause");
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+        Log.d(sTAG,"RecipeStepFragment onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
+        Log.d(sTAG,"RecipeStepFragment onStop");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG,"RecipeStepFragment onDestroyView");
+        Log.d(sTAG,"RecipeStepFragment onDestroyView");
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG,"RecipeStepFragment onViewCreated");
+        Log.d(sTAG,"RecipeStepFragment onViewCreated");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "RecipeStepFragment onCreateView");
+        Log.d(sTAG, "RecipeStepFragment onCreateView");
 
         if(savedInstanceState != null) {
-            recipeId = savedInstanceState.getInt(Constants.KEY_RECIPE_ID);
-            recipeStepId = savedInstanceState.getInt(Constants.KEY_RECIPE_STEP_ID);
+            mRecipeId = savedInstanceState.getInt(Constants.sKEY_RECIPE_ID);
+            mRecipeStepId = savedInstanceState.getInt(Constants.sKEY_RECIPE_STEP_ID);
         }
 
         final View rootView = inflater.inflate(R.layout.fragment_recipe_step, container, false);
@@ -152,12 +156,12 @@ public class RecipeStepFragment extends Fragment {
     }
 
     private void initializePlayer() {
-        if(simpleExoPlayer == null) {
+        if(mSimpleExoPlayer == null) {
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
 
-            simpleExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-            simpleExoPlayerView.setPlayer(simpleExoPlayer);
+            mSimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
+            mSimpleExoPlayerView.setPlayer(mSimpleExoPlayer);
         }
     }
 
@@ -166,35 +170,35 @@ public class RecipeStepFragment extends Fragment {
      * @param mediaUri
      */
     private void loadMediaIntoPlayer(Uri mediaUri) {
-        Log.d(TAG,"loadMediaIntoPlayer: "+mediaUri);
+        Log.d(sTAG,"loadMediaIntoPlayer: "+mediaUri);
 
         String userAgent = Util.getUserAgent(getContext(),"BakingMadeEasy");
 
         MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                 getContext(),userAgent), new DefaultExtractorsFactory(),null,null);
-        simpleExoPlayer.prepare(mediaSource);
+        mSimpleExoPlayer.prepare(mediaSource);
 
-        if (exoPlayerStopPosition != 0 && !exoPlayerHasStopped){
-            simpleExoPlayer.seekTo(exoPlayerCurrentPosition);
+        if (mExoPlayerStopPosition != 0 && !mExoPlayerHasStopped){
+            mSimpleExoPlayer.seekTo(mExoPlayerCurrentPosition);
         } else {
-            simpleExoPlayer.seekTo(exoPlayerStopPosition);
+            mSimpleExoPlayer.seekTo(mExoPlayerStopPosition);
         }
 
-        simpleExoPlayerView.setVisibility(View.VISIBLE);
+        mSimpleExoPlayerView.setVisibility(View.VISIBLE);
     }
 
     private void hideMediaPlayer() {
-        simpleExoPlayerView.setVisibility(View.INVISIBLE);
+        mSimpleExoPlayerView.setVisibility(View.INVISIBLE);
     }
 
     /**
      *
      */
     private void releasePlayer(){
-        if(simpleExoPlayer != null) {
-            simpleExoPlayer.stop();
-            simpleExoPlayer.release();
-            simpleExoPlayer = null;
+        if(mSimpleExoPlayer != null) {
+            mSimpleExoPlayer.stop();
+            mSimpleExoPlayer.release();
+            mSimpleExoPlayer = null;
         }
     }
 
@@ -215,8 +219,8 @@ public class RecipeStepFragment extends Fragment {
      */
     private void setupViewModel()
     {
-        RecipeStepViewModelFactory factory = new RecipeStepViewModelFactory(getActivity().getApplication(), recipeId, recipeStepId);
-        viewModel = ViewModelProviders.of(this, factory).get(RecipeStepViewModel.class);
+        RecipeStepViewModelFactory factory = new RecipeStepViewModelFactory(getActivity().getApplication(), mRecipeId, mRecipeStepId);
+        mViewModel = ViewModelProviders.of(this, factory).get(RecipeStepViewModel.class);
     }
 
     /***
@@ -224,25 +228,25 @@ public class RecipeStepFragment extends Fragment {
      * @return
      */
     private Boolean reloadRecipeStepData() {
-        Log.d(TAG, "reloadRecipeStepData");
+        Log.d(sTAG, "reloadRecipeStepData");
 
-        viewModel.getRecipesRepository().getRecipeStep(recipeId, recipeStepId, new OnGetRecipeStepCallback() {
+        mViewModel.getRecipesRepository().getRecipeStep(mRecipeId, mRecipeStepId, new OnGetRecipeStepCallback() {
             @Override
             public void onStarted() {
-                Log.d(TAG,"reloadRecipeStepData onStarted");
+                Log.d(sTAG,"reloadRecipeStepData onStarted");
             }
 
             @Override
             public void onSuccess(RecipeStepEntity recipeStep) {
-                Log.d(TAG,"reloadRecipeStepData onSuccess");
-                Log.d(TAG,recipeStep.toString());
+                Log.d(sTAG,"reloadRecipeStepData onSuccess");
+                Log.d(sTAG,recipeStep.toString());
 
                 updateStepData(recipeStep);
             }
 
             @Override
             public void onError() {
-                Log.d(TAG,"reloadRecipeStepData onError");
+                Log.d(sTAG,"reloadRecipeStepData onError");
             }
         });
 
@@ -266,8 +270,8 @@ public class RecipeStepFragment extends Fragment {
         else
             hideMediaPlayer();
 
-        txtShortDescription.setText(recipeStep.getShortDescription());
-        txtDescription.setText(recipeStep.getDescription());
+        mTxtShortDescription.setText(recipeStep.getShortDescription());
+        mTxtDescription.setText(recipeStep.getDescription());
 
         return true;
     }

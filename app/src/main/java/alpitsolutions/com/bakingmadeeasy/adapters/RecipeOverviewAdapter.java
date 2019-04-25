@@ -17,10 +17,10 @@ import alpitsolutions.com.bakingmadeeasy.views.RecipesOverviewFragment;
 
 public class RecipeOverviewAdapter extends RecyclerView.Adapter<RecipeOverviewAdapter.RecipeOverviewViewHolder> {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipeOverviewAdapter.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipeOverviewAdapter.class.getSimpleName();
 
-    private List<RecipeEntity> recipes;
-    final private RecipesOverviewFragment.OnRecipeClickCallback onRecipeClickCallback;
+    private List<RecipeEntity> mRecipes;
+    final private RecipesOverviewFragment.OnRecipeClickCallback mOnRecipeClickCallback;
 
     /***
      *
@@ -28,8 +28,8 @@ public class RecipeOverviewAdapter extends RecyclerView.Adapter<RecipeOverviewAd
      * @param onRecipeClickCallback
      */
     public RecipeOverviewAdapter(List<RecipeEntity> recipes, RecipesOverviewFragment.OnRecipeClickCallback onRecipeClickCallback) {
-        this.recipes = recipes;
-        this.onRecipeClickCallback = onRecipeClickCallback;
+        this.mRecipes = recipes;
+        this.mOnRecipeClickCallback = onRecipeClickCallback;
     }
 
     /***
@@ -38,7 +38,7 @@ public class RecipeOverviewAdapter extends RecyclerView.Adapter<RecipeOverviewAd
      */
     public void setRecipeEntryList(List<RecipeEntity> recipes)
     {
-        this.recipes = recipes;
+        this.mRecipes = recipes;
         notifyDataSetChanged();
     }
 
@@ -62,8 +62,8 @@ public class RecipeOverviewAdapter extends RecyclerView.Adapter<RecipeOverviewAd
      */
     @Override
     public void onBindViewHolder(@NonNull RecipeOverviewAdapter.RecipeOverviewViewHolder recipeOverviewViewHolderViewHolder, int position) {
-        Log.d(TAG,"onBindViewHolder position: "+position);
-        recipeOverviewViewHolderViewHolder.bind(recipes.get(position));
+        Log.d(sTAG,"onBindViewHolder position: "+position);
+        recipeOverviewViewHolderViewHolder.bind(mRecipes.get(position));
     }
 
     /***
@@ -72,7 +72,7 @@ public class RecipeOverviewAdapter extends RecyclerView.Adapter<RecipeOverviewAd
      */
     @Override
     public int getItemCount() {
-        return recipes.size();
+        return mRecipes.size();
     }
 
 
@@ -89,7 +89,7 @@ public class RecipeOverviewAdapter extends RecyclerView.Adapter<RecipeOverviewAd
           itemView.setOnClickListener(new View.OnClickListener(){
               @Override
               public void onClick(View v) {
-                  onRecipeClickCallback.onRecipeItemClick(recipeEntity);
+                  mOnRecipeClickCallback.onRecipeItemClick(recipeEntity);
               }
         });
       }

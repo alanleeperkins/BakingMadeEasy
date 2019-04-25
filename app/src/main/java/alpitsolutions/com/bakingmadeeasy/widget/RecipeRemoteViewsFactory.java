@@ -16,28 +16,29 @@ import alpitsolutions.com.bakingmadeeasy.utility.Constants;
 
 public class RecipeRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipeRemoteViewsFactory.class.getSimpleName();
-    private Context context;
-    private BakingMadeEasyRepository repository=null;
+    private static final String sTAG = Constants.sTAG_FILTER + RecipeRemoteViewsFactory.class.getSimpleName();
 
-    private List<TbRecipeEntity> recipes = null;
+    private Context mContext;
+    private BakingMadeEasyRepository mRepository = null;
+    private List<TbRecipeEntity> mRecipes = null;
+
     /**
      *
      * @param applicationContext
      */
     public RecipeRemoteViewsFactory(Context applicationContext) {
-        context = applicationContext;
-        repository = BakingMadeEasyRepository.getInstance(applicationContext);
+        mContext = applicationContext;
+        mRepository = BakingMadeEasyRepository.getInstance(applicationContext);
     }
 
     @Override
     public void onCreate() {
-        Log.d(TAG,"onCreate");
+        Log.d(sTAG,"onCreate");
     }
 
     @Override
     public void onDataSetChanged() {
-        Log.d(TAG,"onDataSetChanged");
+        Log.d(sTAG,"onDataSetChanged");
         updateRecipeList();
     }
 
@@ -45,28 +46,28 @@ public class RecipeRemoteViewsFactory implements RemoteViewsService.RemoteViewsF
      *
      */
     private void updateRecipeList() {
-        Log.d(TAG,"updateRecipeList");
-        if (repository==null)
+        Log.d(sTAG,"updateRecipeList");
+        if (mRepository ==null)
             return;
 
-        recipes = repository.localRepository.recipesDao.getListOfAllRecipes();
+        mRecipes = mRepository.mLocalRepository.mRecipesDao.getListOfAllRecipes();
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG,"onDestroy");
+        Log.d(sTAG,"onDestroy");
     }
 
     @Override
     public int getCount() {
 
-        if(recipes==null) {
-            Log.d(TAG,"getCount = NULL");
+        if(mRecipes==null) {
+            Log.d(sTAG,"getCount = NULL");
             return 0;
         }
 
-        int count = recipes.size();
-        Log.d(TAG,"getCount = "+count);
+        int count = mRecipes.size();
+        Log.d(sTAG,"getCount = "+count);
 
         return count;
     }
@@ -78,13 +79,13 @@ public class RecipeRemoteViewsFactory implements RemoteViewsService.RemoteViewsF
      */
     @Override
     public RemoteViews getViewAt(int position) {
-        Log.d(TAG,"getViewAt pos "+position);
+        Log.d(sTAG,"getViewAt pos "+position);
 
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.favorite_recipes_widget_list_item);
-        remoteViews.setTextViewText(R.id.txtRecipeName,recipes.get(position).getName());
+        RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.favorite_recipes_widget_list_item);
+        remoteViews.setTextViewText(R.id.txtRecipeName,mRecipes.get(position).getName());
 
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtra(Constants.KEY_RECIPE_ID, recipes.get(position).getRecipeId());
+        fillInIntent.putExtra(Constants.sKEY_RECIPE_ID, mRecipes.get(position).getRecipeId());
 
         remoteViews.setOnClickFillInIntent(R.id.recipe_widget_item_container, fillInIntent);
 
@@ -93,25 +94,25 @@ public class RecipeRemoteViewsFactory implements RemoteViewsService.RemoteViewsF
 
     @Override
     public RemoteViews getLoadingView() {
-        Log.d(TAG,"getLoadingView");
+        Log.d(sTAG,"getLoadingView");
         return null;
     }
 
     @Override
     public int getViewTypeCount() {
-        Log.d(TAG,"getViewTypeCount");
+        Log.d(sTAG,"getViewTypeCount");
         return 1;
     }
 
     @Override
     public long getItemId(int position) {
-        Log.d(TAG,"getItemId");
+        Log.d(sTAG,"getItemId");
         return position;
     }
 
     @Override
     public boolean hasStableIds() {
-        Log.d(TAG,"hasStableIds");
+        Log.d(sTAG,"hasStableIds");
         return true;
     }
 }

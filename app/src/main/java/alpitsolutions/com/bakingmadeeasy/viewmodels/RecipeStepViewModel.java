@@ -10,9 +10,9 @@ import alpitsolutions.com.bakingmadeeasy.utility.Constants;
 
 public class RecipeStepViewModel extends AndroidViewModel {
 
-    private static final String TAG = Constants.TAG_FILTER + RecipeStepViewModel.class.getSimpleName();
+    private static final String sTAG = Constants.sTAG_FILTER + RecipeStepViewModel.class.getSimpleName();
 
-    private RecipesRemoteRepository recipesRepository;
+    private RecipesRemoteRepository mRecipesRepository;
 
     /***
      *
@@ -23,9 +23,9 @@ public class RecipeStepViewModel extends AndroidViewModel {
     public RecipeStepViewModel(@NonNull Application application,@NonNull Integer recipeId, @NonNull Integer recipeStepId) {
         super(application);
 
-        recipesRepository = RecipesRemoteRepository.getInstance();
-        Log.d(TAG, "RecipeStepViewModel init");
+        mRecipesRepository = RecipesRemoteRepository.getInstance();
+        Log.d(sTAG, "RecipeStepViewModel init");
     }
 
-    public RecipesRemoteRepository getRecipesRepository() { return recipesRepository; }
+    public RecipesRemoteRepository getRecipesRepository() { return mRecipesRepository; }
 }
