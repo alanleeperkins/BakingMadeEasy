@@ -1,9 +1,9 @@
-#Baking Made Easy
+# Baking Made Easy
 
-##Description
+## Description
 The task was to create an Android Baking App that will allow Udacity's resident baker-in-chief, Miriam, to share her recipes with the world. Creating an app that will allow a user to select a recipe and see video-guided steps for how to complete it. The user can also add and widget to his home screen for faster access to it's favortite recipes.
 
-####Third party libraries:
+#### Third party libraries:
 - Espresso
 *Espresso is a testing framework for Android that makes it easy to write reliable UI tests for an app*
 https://developer.android.com/training/testing/ui-testing/espresso-testing
